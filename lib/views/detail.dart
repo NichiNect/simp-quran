@@ -1,8 +1,8 @@
 import 'dart:convert';
 import 'dart:developer';
-
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
+import 'package:flutter_html/flutter_html.dart';
 
 class Detail extends StatelessWidget {
   @override
@@ -18,7 +18,7 @@ class Detail extends StatelessWidget {
 
   Widget build(BuildContext context) {
     return Scaffold(
-        appBar: AppBar(),
+        appBar: AppBar(title: Text(surat['nama'] + " - " + surat['ayat'].toString() + " ayat"),),
         body: Container(
           // padding: EdgeInsets.only(top: 20),
           child: FutureBuilder(
@@ -35,16 +35,28 @@ class Detail extends StatelessWidget {
                           child: Column(
                             mainAxisAlignment: MainAxisAlignment.center,
                             children: [
-                              // Center(
-                              //   child: Padding(
-                              //     padding: const EdgeInsets.all(12),
-                              //     child: Text(surat['nama'], style: TextStyle(fontWeight: FontWeight.w600, fontSize: 20),),
-                              //   ),
-                              // ),
                               Column(
                                 children: [
-                                  Text(res.data[index]['ar'], style: TextStyle(fontWeight: FontWeight.w500, fontSize: 18),),
-                                  Text(res.data[index]['id'] + "(" + res.data[index]['nomor'].toString() + ")"),
+                                  Text(res.data[index]['ar'], style: TextStyle(fontWeight: FontWeight.w500, fontSize: 20),),
+                                  Column(
+                                    mainAxisAlignment: MainAxisAlignment.start,
+                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                    children: [
+                                      new Html(data: res.data[index]['tr'], 
+                                        defaultTextStyle: TextStyle(fontSize: 16),
+                                      ),
+                                    ],
+                                  ),
+                                  SizedBox(
+                                    height: 10,
+                                  ),
+                                  Text("Artinya : " + res.data[index]['id'] + "(" + res.data[index]['nomor'].toString() + ")",
+                                    style: TextStyle(
+                                      fontWeight: FontWeight.w400,
+                                      fontStyle: FontStyle.italic
+                                    ),
+                                  ),
+                                  Divider(),
                                 ],
                               )
                             ],
@@ -54,7 +66,7 @@ class Detail extends StatelessWidget {
                   },
                 );
               } else {
-                return Center(child: Text('Data tidak ditemukan'));
+                return Center(child: Text('Data belum ditemukan'));
               }
             },
           ),

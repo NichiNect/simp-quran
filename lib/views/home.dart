@@ -1,6 +1,9 @@
 import 'dart:convert';
 import 'package:audioplayers/audioplayers.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_html/flutter_html.dart';
+import 'package:get/get.dart';
+
 import 'package:http/http.dart' as http;
 import 'package:simp_quran/views/detail.dart';
 
@@ -40,7 +43,7 @@ class _HomeState extends State<Home> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Center(child: Text("Home Page"))),
+      appBar: AppBar(title: Center(child: Text("Our Al-Qur'an"))),
       body: FutureBuilder(
           future: getData(),
           builder: (context, snapshoot) {
@@ -50,39 +53,86 @@ class _HomeState extends State<Home> {
                   itemBuilder: (context, index) {
                     return Container(
                       padding: EdgeInsets.all(8.0),
-                      height: 130,
+                      height: 150,
                       child: GestureDetector(
                         onTap: () {
-                          Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                  builder: (context) =>
-                                      Detail(surat: snapshoot.data[index])));
+                          Get.bottomSheet(
+                            ClipRRect(
+                              clipBehavior: Clip.antiAlias,
+                              borderRadius: BorderRadius.only(
+                                topRight: Radius.circular(20),
+                                topLeft: Radius.circular(20),
+                              ),
+                              child: Container(
+                                color: Colors.white,
+                                padding: EdgeInsets.only(
+                                  top: 40,
+                                  right: 20,
+                                  left: 20,
+                                  bottom: 10
+                                ),
+                                child:
+                                    // Icon(Icons.arrow_drop_down_sharp),
+                                    ListView.builder(
+                                      itemCount: 1,
+                                      itemBuilder: (BuildContext context, int i) {
+                                        return Container(
+                                          child: Column(
+                                            crossAxisAlignment: CrossAxisAlignment.start,
+                                            children: [
+                                              ElevatedButton(onPressed: () {
+                                                Navigator.push(
+                                                  context,
+                                                  MaterialPageRoute(
+                                                      builder: (context) =>
+                                                          Detail(surat: snapshoot.data[index])));
+                                              }, child: Text("Baca")),
+
+                                              Html(data: snapshoot.data[index]['keterangan'])
+                                            ],
+                                          ),
+                                        );
+                                      },
+                                    ),
+                              ),
+                            ),
+                          );
+
+                          // Navigator.push(
+                          //     context,
+                          //     MaterialPageRoute(
+                          //         builder: (context) =>
+                          //             Detail(surat: snapshoot.data[index])));
                         },
                         child: Card(
                           elevation: 3,
                           child: Padding(
-                            padding: EdgeInsets.all(10),
+                            padding: EdgeInsets.all(15),
                             child: Column(
                               children: [
                                 Row(
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceBetween,
                                   children: [
                                     Text(
                                       snapshoot.data[index]['nama'],
                                       style: TextStyle(
                                           fontSize: 18,
                                           fontWeight: FontWeight.w600),
-                                    )
+                                    ),
+                                    Text(snapshoot.data[index]['asma'],
+                                        style: TextStyle(
+                                            fontWeight: FontWeight.w500,
+                                            fontSize: 20)),
                                   ],
                                 ),
-                                Row(
-                                  mainAxisAlignment:
-                                      MainAxisAlignment.spaceBetween,
+                                Column(
                                   children: [
-                                    Text(snapshoot.data[index]['arti']),
                                     Row(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.start,
                                       children: [
-                                        Text(snapshoot.data[index]['asma']),
+                                        Text(snapshoot.data[index]['arti']),
                                         TextButton(
                                             style: ButtonStyle(
                                                 padding:
@@ -104,9 +154,35 @@ class _HomeState extends State<Home> {
                     );
                   });
             } else {
-              return Center(child: Text('Data tidak ditemukan'));
+              return Center(child: Text('Data belum ditemukan'));
             }
           }),
     );
   }
 }
+// showModalBottomSheet(
+//                               backgroundColor: Colors.transparent,
+//                               context: context,
+//                               builder: (context) {
+//                                 return ClipRRect(
+//                                   clipBehavior: Clip.antiAlias,
+//                                   borderRadius: BorderRadius.only(
+//                                     topRight: Radius.circular(20),
+//                                     topLeft: Radius.circular(20),
+//                                   ),
+//                                   child: Container(
+//                                       height: 250,
+//                                       color: Colors.grey[400],
+//                                       child: Container(
+//                                         padding: EdgeInsets.all(20),
+//                                         child: Column(
+//                                           mainAxisAlignment:
+//                                               MainAxisAlignment.spaceAround,
+//                                           children: [
+//                                             Text(snapshoot.data[index]
+//                                                 ['keterangan'])
+//                                           ],
+//                                         ),
+//                                       )),
+//                                 );
+//                               });
